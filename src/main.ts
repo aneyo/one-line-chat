@@ -36,6 +36,14 @@ chat.onMessageRemove((_, id) => {
 chat.onBan((_, user) => onBan(user));
 chat.onTimeout((_, user) => onBan(user));
 
+chat.onChatClear(() => {
+  messages = [];
+  if (current) {
+    clearTimeout(showTimer);
+    hideMessage(current);
+  }
+});
+
 function onBan(user: string) {
   messages = messages.filter((msg) => msg.userInfo.userName !== user);
   if (current && current.userInfo.userName === user) {
