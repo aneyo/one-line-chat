@@ -82,8 +82,6 @@ function showMessage(message: TwitchPrivateMessage) {
       badge[b[1]]
     })"></span>`;
   });
-  if (badgesString.length > 0)
-    console.log(message.userInfo.userName, badgesString);
 
   const prefix =
     badgesString.length > 0
@@ -93,7 +91,6 @@ function showMessage(message: TwitchPrivateMessage) {
   const username = `<span class="name" style="color: ${message.userInfo.color}">${message.userInfo.userName}</span>`;
 
   const content = parseContent(message);
-  console.log(content);
 
   el.innerHTML = `<span class="user">${prefix}${username}</span><span class="message"><span class="content">${content}</span></span>`;
   el.className = "line show";
@@ -123,8 +120,6 @@ function parseContent(data: TwitchPrivateMessage) {
     return encode(part.text)
       .trim()
       .replace(/\w+/gi, (sub, o, str: string) => {
-        console.log(sub, o, str);
-
         if (!emotesMap.has(sub)) return sub;
         const emote = emotesMap.get(sub)!;
         let template = `<span class="emote" style="background-image: url(${emote})"></span>`;
@@ -192,7 +187,6 @@ async function prepare() {
   ];
 
   emotesMap = new Map([...bttvEmotes, ...ffzEmotes] as [string, string][]);
-  console.log(emotesMap);
 
   await chat.connect();
 }
