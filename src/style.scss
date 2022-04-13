@@ -1,0 +1,116 @@
+body {
+  display: flex;
+  align-items: flex-end;
+  height: 100vh;
+  overflow: hidden;
+
+  background-image: linear-gradient(#fff0 90%, #000 130%);
+}
+
+#shower {
+  --m: 0.5rem;
+  margin: var(--m);
+  max-width: calc(100% - var(--m) * 2);
+  // overflow-x: hidden;
+  // overflow-y: visible;
+
+  color: #fafafa;
+
+  font-family: Calibri;
+  font-size: 18px;
+  line-height: 1;
+
+  & > .line {
+    display: flex;
+    flex-shrink: 0;
+    height: 20px;
+
+    position: absolute;
+    bottom: 0.5rem;
+
+    & > .user {
+      display: flex;
+      flex-shrink: 0;
+
+      & > .badges {
+        display: flex;
+        gap: 0.15rem;
+        margin-right: 0.25rem;
+
+        & > .badge {
+          height: 1.25rem;
+          width: 1.25rem;
+          border-radius: 0.2rem;
+          overflow: hidden;
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+      }
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      & > .name {
+        font-weight: bold;
+        overflow: hidden;
+      }
+
+      &::after {
+        content: ":";
+        margin-right: 0.25rem;
+      }
+    }
+
+    & > .message {
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      & > .content {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        // display: flex;
+
+        & > .emote {
+          display: inline-block;
+          height: 1.25rem;
+          width: 1.25rem;
+          background-size: contain;
+          background-repeat: no-repeat;
+          overflow: hidden;
+          vertical-align: middle;
+        }
+      }
+    }
+
+    &.show {
+      animation: slide-top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    }
+
+    &.hide {
+      animation: just-hide 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    }
+  }
+}
+
+@keyframes slide-top {
+  0% {
+    transform: translateY(1.5rem);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes just-hide {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
