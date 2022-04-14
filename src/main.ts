@@ -1,16 +1,15 @@
 import { ChatClient } from "@twurple/chat";
 import { TwitchPrivateMessage } from "@twurple/chat/lib/commands/TwitchPrivateMessage";
 import { encode } from "html-entities";
+import { setStyles } from "./dimensions";
+import { CHANNEL, SCROLL_SPEED, TIMEOUT } from "./misc";
 import "./style.scss";
 
-const channel = document.location.hash.slice(1) || "xqcow";
-const viewTime = 5000;
-
-console.log("connecting to", channel);
-document.title = "#" + channel;
+console.log("connecting to", CHANNEL);
+document.title = "#" + CHANNEL;
 
 const block = document.getElementById("shower")!;
-const chat = new ChatClient({ channels: [channel] });
+const chat = new ChatClient({ channels: [CHANNEL] });
 
 chat.onConnect(() => console.log("connected to chat."));
 chat.onJoin((e) => console.log("joined", e));
@@ -52,7 +51,7 @@ function onBan(user: string) {
   }
 }
 
-function nextMessage() {
+function nextMessage(): any {
   if (messages.length < 1) {
     showing = false;
     return;
@@ -61,18 +60,14 @@ function nextMessage() {
   showing = true;
 
   current = messages.shift()!;
+
   showMessage(current);
-
-  showTimer = window.setTimeout(() => {
-    hideMessage(current!);
-    showing = false;
-
-    if (messages.length > 0) nextMessage();
-  }, viewTime);
 }
 
 function showMessage(message: TwitchPrivateMessage) {
   const el = document.createElement("div");
+
+  userColors.set(message.userInfo.userName, message.userInfo.color || "");
 
   const badgesString = [...message.userInfo.badges.entries()].map((b) => {
     if (!badgesMap.has(b[0])) return "";
@@ -92,22 +87,77 @@ function showMessage(message: TwitchPrivateMessage) {
 
   const content = parseContent(message);
 
-  el.innerHTML = `<span class="user">${prefix}${username}</span><span class="message"><span class="content">${content}</span></span>`;
+  el.innerHTML = `<span class="user">${prefix}${username}</span><span class="message"><div class="content">${content}</div></span>`;
   el.className = "line show";
   el.setAttribute("id", message.id);
 
   block.appendChild(el);
+
+  // * check if text is wider than bounds
+
+  const contel = el.getElementsByClassName("content")[0];
+  const cl = contel.scrollWidth;
+  const ml = el.getElementsByClassName("message")[0].clientWidth;
+
+  if (cl <= ml) {
+    showTimer = window.setTimeout(() => {
+      hideMessage(current!);
+      showing = false;
+
+      if (messages.length > 0) nextMessage();
+    }, TIMEOUT);
+    return;
+  }
+
+  const path = cl - ml;
+
+  // set animation
+  const speed = (path / SCROLL_SPEED) * 1000;
+  const timeout = cl / ml;
+
+  contel.setAttribute("style", `--dur: ${speed}ms; --target: ${path}px`);
+  contel.addEventListener(
+    "animationend",
+    () => {
+      contel.addEventListener(
+        "animationend",
+        () => {
+          // end with timer
+          showTimer = window.setTimeout(() => {
+            hideMessage(current!);
+            showing = false;
+
+            if (messages.length > 0) nextMessage();
+          }, TIMEOUT / 2 / timeout);
+          return;
+        },
+        {
+          once: true,
+        }
+      );
+
+      showTimer = window.setTimeout(() => {
+        // set second animation
+        contel.classList.remove("scroll");
+        contel.classList.add("scroll-return");
+      }, 1500);
+    },
+    {
+      once: true,
+    }
+  );
+
+  showTimer = window.setTimeout(() => contel.classList.add("scroll"), 1500);
 }
 function hideMessage(message: TwitchPrivateMessage) {
-  // TODO:
   const el = document.getElementById(message.id)!;
-  el.classList.remove("show");
   el.addEventListener("animationend", () => block.removeChild(el));
-  el.classList.add("hide");
+  el.className = "line hide";
 }
 
 let badgesMap = new Map<string, { [size: string]: string }>();
 let emotesMap = new Map<string, string>();
+let userColors = new Map<string, string>();
 
 function parseContent(data: TwitchPrivateMessage) {
   const parsed = data.parseEmotes();
@@ -119,7 +169,7 @@ function parseContent(data: TwitchPrivateMessage) {
 
     return encode(part.text)
       .trim()
-      .replace(/\w+/gi, (sub, o, str: string) => {
+      .replace(/:\w+:|\w+/gi, (sub, o, str: string) => {
         if (!emotesMap.has(sub)) return sub;
         const emote = emotesMap.get(sub)!;
         let template = `<span class="emote" style="background-image: url(${emote})"></span>`;
@@ -127,6 +177,11 @@ function parseContent(data: TwitchPrivateMessage) {
           str.charAt(o + sub.length) === " " ? template + "&nbsp;" : template;
 
         return template;
+      })
+      .replace(/@\w+/gi, (sub) => {
+        if (userColors.has(sub.slice(1)))
+          return `<b style="color: ${userColors.get(sub.slice(1))}">${sub}</b>`;
+        return `<b>${sub}</b>`;
       });
   });
 
@@ -136,7 +191,7 @@ function parseContent(data: TwitchPrivateMessage) {
 async function prepare() {
   const channel_data = (await (
     await fetch(
-      `https://nightdev.com/api/1/kapchat/channels/${channel}/bootstrap`
+      `https://nightdev.com/api/1/kapchat/channels/${CHANNEL}/bootstrap`
     )
   ).json()) as {
     badges: { [badge: string]: { [size: string]: string } };
@@ -144,6 +199,10 @@ async function prepare() {
   };
 
   badgesMap = new Map(Object.entries(channel_data.badges));
+
+  const bttvGlobalEmotesData = (await (
+    await fetch(`https://api.betterttv.net/3/cached/emotes/global`)
+  ).json()) as { code: string; id: string }[];
 
   const bttvEmotesData = (await (
     await fetch(
@@ -155,6 +214,10 @@ async function prepare() {
   };
 
   const bttvEmotes = [
+    ...bttvGlobalEmotesData.map((emote) => [
+      emote.code,
+      `https://cdn.betterttv.net/emote/${emote.id}/1x`,
+    ]),
     ...bttvEmotesData.channelEmotes.map((emote) => [
       emote.code,
       `https://cdn.betterttv.net/emote/${emote.id}/1x`,
@@ -191,4 +254,5 @@ async function prepare() {
   await chat.connect();
 }
 
+setStyles();
 prepare();

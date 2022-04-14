@@ -4,15 +4,58 @@ body {
   height: 100vh;
   overflow: hidden;
 
-  background-image: linear-gradient(#fff0 90%, #000 130%);
+  &.ingame {
+    &::before {
+      opacity: 0;
+    }
+  }
+
+  &.nobg {
+    &::before {
+      display: none;
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    top: 0;
+    left: 0;
+
+    background-image: linear-gradient(
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.9) 95%,
+      #000 105%
+    );
+    opacity: 1;
+    transition: opacity 250ms ease-in-out;
+  }
+
+  &.design {
+    & > #shower {
+      & > .line {
+        background: rgba(255, 0, 0, 0.5);
+      }
+
+      &::before {
+        content: "";
+        height: calc(100vh - var(--margin, 8px));
+        position: absolute;
+        bottom: var(--margin, 8px);
+        left: var(--margin, 8px);
+        width: var(--bound, calc(100% - var(--margin, 8px) * 2));
+        background: rgba(255, 0, 0, 0.5);
+      }
+    }
+  }
 }
 
 #shower {
-  --m: 0.5rem;
-  margin: var(--m);
-  max-width: calc(100% - var(--m) * 2);
-  // overflow-x: hidden;
-  // overflow-y: visible;
+  margin: var(--margin, 8px);
+  // max-width: calc(100% - var(--margin, 8px) * 2);
 
   color: #fafafa;
 
@@ -26,7 +69,9 @@ body {
     height: 20px;
 
     position: absolute;
-    bottom: 0.5rem;
+    bottom: var(--margin, 8px);
+    max-width: var(--bound, calc(100% - var(--margin, 8px) * 2));
+    width: 100%;
 
     & > .user {
       display: flex;
@@ -63,13 +108,14 @@ body {
     }
 
     & > .message {
+      flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
 
       & > .content {
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
 
         // display: flex;
 
@@ -81,6 +127,14 @@ body {
           background-repeat: no-repeat;
           overflow: hidden;
           vertical-align: middle;
+        }
+
+        &.scroll {
+          animation: content-scroll var(--dur) linear both;
+        }
+
+        &.scroll-return {
+          animation: content-scroll-return 1s ease-in-out both;
         }
       }
     }
@@ -112,5 +166,37 @@ body {
   }
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes content-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(calc(-1 * var(--target)));
+  }
+}
+
+@keyframes content-scroll-return {
+  0% {
+    opacity: 1;
+    transform: translateX(calc(-1 * var(--target)));
+  }
+
+  49% {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--target)));
+  }
+
+  50% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
