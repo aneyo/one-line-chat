@@ -10,11 +10,17 @@
 
 - `speed=<number>` - The speed of scrolling message. _defaults to `80`._
 
+- `display=<local|login|combo>` - How user nickname should be displayed. _defaults to `local`._
+
+  - `local` - will display `@ayaya` as `@あやや` or `@aYAYA`
+  - `login` - will display `@ayaya` as `@ayaya`
+  - `combo` - will display `@ayaya` as `@あやや (@ayaya)` or `@aYAYA`
+
 - `nobg` - Hide background gradient. _turned off by default._
 
 - `gosu=<addr?>` - Use [**gosumemory**](https://github.com/l3lackShark/gosumemory) to hide background gradient while playing, unless `nobg` is presented. if no address specified, use default `ws://127.0.0.1:24050/ws`. _turned off by default._
 
-- `hd` - Use **HD** emotes when possible. _turned off by default._
+- `hd` - Use **HD**(3x/4x) emotes when possible. _turned off by default._
 
 - `margin=<number>` - Message line margin in pixels. _defaults to `8` pixels._
 
