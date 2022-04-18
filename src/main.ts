@@ -1,4 +1,4 @@
-import { ChatClient } from "@twurple/chat";
+import { ChatClient, ChatUser } from "@twurple/chat";
 import { TwitchPrivateMessage } from "@twurple/chat/lib/commands/TwitchPrivateMessage";
 import { encode } from "html-entities";
 import { fetchBadges, getBadge, isKnownBadge } from "./assets/badges";
@@ -10,7 +10,13 @@ import {
 } from "./assets/emotes";
 import { checkForUserColor, getUserColor, setUserColor } from "./assets/users";
 import { setStyles } from "./dimensions";
-import { CHANNEL, SCROLL_SPEED, TIMEOUT, USE_HD_EMOTES } from "./misc";
+import {
+  CHANNEL,
+  NAME_DISPAY_MODE,
+  SCROLL_SPEED,
+  TIMEOUT,
+  USE_HD_EMOTES,
+} from "./misc";
 import "./style.scss";
 
 document.title = "#" + CHANNEL;
@@ -92,13 +98,13 @@ function showMessage(message: TwitchPrivateMessage) {
       ? `<span class="badges">${badgesStringJoined.join("")}</span>`
       : "";
 
-  const userName = `<span class="name" style="color: ${
+  const userNameString = `<span class="name" style="color: ${
     message.userInfo.color
-  }">${message.userInfo.displayName || message.userInfo.userName}</span>`;
+  }">${resolveUsername(message.userInfo)}</span>`;
 
   const messageContent = parseContent(message);
 
-  el.innerHTML = `<span class="user">${userPrefix}${userName}</span><span class="message"><div class="content">${messageContent}</div></span>`;
+  el.innerHTML = `<span class="user">${userPrefix}${userNameString}</span><span class="message"><div class="content">${messageContent}</div></span>`;
 
   el.className = "line show";
   el.setAttribute("id", message.id);
@@ -171,6 +177,22 @@ function hideMessage(message: TwitchPrivateMessage) {
   el.className = "line hide";
 
   showing = false;
+}
+
+function resolveUsername(user: ChatUser) {
+  switch (NAME_DISPAY_MODE) {
+    case "login":
+      return user.userName;
+    case "combo":
+      if (user.displayName.toLocaleLowerCase() === user.userName)
+        return user.displayName;
+      else return `${user.displayName} (${user.displayName})`;
+
+    case "local":
+    case "default":
+    default:
+      return user.displayName || user.userName;
+  }
 }
 
 function parseContent(data: TwitchPrivateMessage) {
