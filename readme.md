@@ -24,5 +24,5 @@
 
 ## Examples
 
-- [`https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&nobg`](https://aneyo.github.io/one-line-chat/?&channel=pondelinp&bound=815&margin=12&gosu)
-- [`https://aneyo.github.io/one-line-chat/?&channel=aneyuu&bound=500&margin=15&gosu&hd`](https://aneyo.github.io/one-line-chat/?&channel=aneyuu&bound=500&margin=15&gosu&hd)
+- [`https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&nobg`](https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&gosu)
+- [`https://aneyo.github.io/one-line-chat/?channel=aneyuu&bound=500&margin=15&gosu&hd`](https://aneyo.github.io/one-line-chat/?channel=aneyuu&bound=500&margin=15&gosu&hd)
