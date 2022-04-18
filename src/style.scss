@@ -113,7 +113,7 @@ body {
 
     & > .message {
       flex: 1;
-      overflow-y: hidden;
+      overflow: hidden;
 
       & > .content {
         display: flex;
