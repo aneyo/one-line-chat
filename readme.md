@@ -1,6 +1,8 @@
 # [**one-liner chat widget**](https://aneyo.github.io/one-line-chat)
 
-## Options (as query string parameters)
+![](./poggers.png)
+
+## Options _(as query string parameters)_
 
 - `channel=<string>` - Twitch channel to join. _defaults to `xqcow` for testing purposes._
 
@@ -19,3 +21,8 @@
 - `bound=<number>` - Maximum width of the message line in pixels. if message is wider than bound, use scrolling. _defaults to the width of viewport._
 
 - `design` - Show message line maximum width with color. _turned off by default._
+
+## Examples
+
+- [`https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&nobg`](https://aneyo.github.io/one-line-chat/?&channel=pondelinp&bound=815&margin=12&gosu)
+- [`https://aneyo.github.io/one-line-chat/?&channel=aneyuu&bound=500&margin=15&gosu&hd`](https://aneyo.github.io/one-line-chat/?&channel=aneyuu&bound=500&margin=15&gosu&hd)
