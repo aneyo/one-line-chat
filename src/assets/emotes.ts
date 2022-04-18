@@ -56,6 +56,9 @@ export async function fetchEmotes(channel: string) {
 
   emotesMap = new Map([...bttvEmotes, ...ffzEmotes] as [string, string][]);
   console.log("fetched", emotesMap.size, "emotes");
+
+  await preloadEmotes();
+
   return emotesMap;
 }
 
@@ -76,4 +79,29 @@ export function useTwitchEmote(
   return `https://static-cdn.jtvnw.net/emoticons/v2/${code}/${format}/${theme}/${
     size || "1"
   }.0`;
+}
+
+let preloaded = [];
+
+export async function preloadEmotes() {
+  console.log("preloading emotes...");
+
+  preloaded = (
+    (await Promise.allSettled(
+      [...emotesMap.values()].map((emote) => asyncImageLoader(emote))
+    )) as { status: string; value: HTMLImageElement }[]
+  )
+    .filter((emote) => emote.status === "fulfilled")
+    .map((emote) => emote.value);
+
+  console.log("preloaded", preloaded.length, "emotes.");
+}
+
+function asyncImageLoader(url: string) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.src = url;
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Could not load image"));
+  });
 }
