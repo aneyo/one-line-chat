@@ -10,7 +10,7 @@
 
 - `nobg` - Hide background gradient. _turned off by default._
 
-- `gosu` - Use [gosumemory](https://github.com/l3lackShark/gosumemory) to hide background gradient while playing, unless `nobg` is presented. _turned off by default._
+- `gosu=<addr?>` - Use [**gosumemory**](https://github.com/l3lackShark/gosumemory) to hide background gradient while playing, unless `nobg` is presented. if no address specified, use default `ws://127.0.0.1:24050/ws`. _turned off by default._
 
 - `hd` - Use **HD** emotes when possible. _turned off by default._
 
