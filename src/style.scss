@@ -8,9 +8,7 @@ body {
   font-size: 18px;
   font-family: "Calibri", Tahoma, Geneva, Verdana, "ＭＳ Ｐゴシック",
     "MS PGothic", "メイリオ", Meiryo, sans-serif;
-
   // ! don't use line-height:1 with Calibri font
-  line-height: initial;
 
   &.ingame {
     &::before {
@@ -45,7 +43,13 @@ body {
   &.design {
     & > #chat {
       & > .line {
-        background: rgba(255, 0, 0, 0.5);
+        background: rgba(255, 0, 0, 0.25);
+
+        & > .message {
+          & > .content {
+            background: rgba(255, 115, 0, 0.5);
+          }
+        }
       }
 
       &::before {
@@ -55,7 +59,7 @@ body {
         bottom: var(--margin, 8px);
         left: var(--margin, 8px);
         width: var(--bound, calc(100% - var(--margin, 8px) * 2));
-        background: rgba(255, 0, 0, 0.5);
+        background: rgba(255, 0, 0, 0.25);
       }
     }
   }
@@ -109,8 +113,7 @@ body {
 
     & > .message {
       flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      overflow-y: hidden;
 
       & > .content {
         display: flex;
