@@ -35,7 +35,7 @@ body {
   }
 
   &.design {
-    & > #shower {
+    & > #chat {
       & > .line {
         background: rgba(255, 0, 0, 0.5);
       }
@@ -53,7 +53,7 @@ body {
   }
 }
 
-#shower {
+#chat {
   margin: var(--margin, 8px);
 
   color: #fafafa;
@@ -136,17 +136,17 @@ body {
 
     &.show {
       z-index: 1;
-      animation: slide-top 250ms ease-out both;
+      animation: show-slide 250ms ease-out both;
     }
 
     &.hide {
       z-index: 0;
-      animation: just-hide 150ms linear both;
+      animation: hide-opacity 150ms linear both;
     }
   }
 }
 
-@keyframes slide-top {
+@keyframes show-slide {
   0% {
     transform: translateY(1.2rem);
     opacity: 0.75;
@@ -157,7 +157,7 @@ body {
   }
 }
 
-@keyframes just-hide {
+@keyframes hide-opacity {
   0% {
     opacity: 1;
   }

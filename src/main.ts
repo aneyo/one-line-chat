@@ -8,7 +8,7 @@ import "./style.scss";
 console.log("connecting to", CHANNEL);
 document.title = "#" + CHANNEL;
 
-const block = document.getElementById("shower")!;
+const block = document.getElementById("chat")!;
 const chat = new ChatClient({ channels: [CHANNEL] });
 
 chat.onConnect(() => console.log("connected to chat."));
