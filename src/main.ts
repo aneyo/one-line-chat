@@ -1,12 +1,20 @@
 import { ChatClient } from "@twurple/chat";
 import { TwitchPrivateMessage } from "@twurple/chat/lib/commands/TwitchPrivateMessage";
 import { encode } from "html-entities";
+import { fetchBadges, getBadge, isKnownBadge } from "./assets/badges";
+import {
+  fetchEmotes,
+  getEmote,
+  isEmote,
+  useTwitchEmote,
+} from "./assets/emotes";
+import { checkForUserColor, getUserColor, setUserColor } from "./assets/users";
 import { setStyles } from "./dimensions";
 import { CHANNEL, SCROLL_SPEED, TIMEOUT } from "./misc";
 import "./style.scss";
 
-console.log("connecting to", CHANNEL);
 document.title = "#" + CHANNEL;
+console.log("will join", "#" + CHANNEL, "shortly");
 
 const block = document.getElementById("chat")!;
 const chat = new ChatClient({ channels: [CHANNEL] });
@@ -67,27 +75,31 @@ function nextMessage(): any {
 function showMessage(message: TwitchPrivateMessage) {
   const el = document.createElement("div");
 
-  userColors.set(message.userInfo.userName, message.userInfo.color || "");
+  setUserColor(message.userInfo.userName, message.userInfo.color);
 
-  const badgesString = [...message.userInfo.badges.entries()].map((b) => {
-    if (!badgesMap.has(b[0])) return "";
-    const badge = badgesMap.get(b[0])!;
-    if (!badge[b[1]]) return "";
-    return `<span class="badge ${b[0]}" style="background-image: url(${
-      badge[b[1]]
-    })"></span>`;
-  });
+  const badgesStringJoined = [...message.userInfo.badges.entries()].map(
+    ([badgeName, badgeType]) => {
+      if (!isKnownBadge(badgeName)) return "";
+      const badge = getBadge(badgeName, badgeType);
+      if (!badge) return "";
 
-  const prefix =
-    badgesString.length > 0
-      ? `<span class="badges">${badgesString.join("")}</span>`
+      return `<span class="badge ${badgeName}" style="background-image: url(${badge})"></span>`;
+    }
+  );
+
+  const userPrefix =
+    badgesStringJoined.length > 0
+      ? `<span class="badges">${badgesStringJoined.join("")}</span>`
       : "";
 
-  const username = `<span class="name" style="color: ${message.userInfo.color}">${message.userInfo.userName}</span>`;
+  const userName = `<span class="name" style="color: ${
+    message.userInfo.color
+  }">${message.userInfo.displayName || message.userInfo.userName}</span>`;
 
-  const content = parseContent(message);
+  const messageContent = parseContent(message);
 
-  el.innerHTML = `<span class="user">${prefix}${username}</span><span class="message"><div class="content">${content}</div></span>`;
+  el.innerHTML = `<span class="user">${userPrefix}${userName}</span><span class="message"><div class="content">${messageContent}</div></span>`;
+
   el.className = "line show";
   el.setAttribute("id", message.id);
 
@@ -161,104 +173,47 @@ function hideMessage(message: TwitchPrivateMessage) {
   showing = false;
 }
 
-let badgesMap = new Map<string, { [size: string]: string }>();
-let emotesMap = new Map<string, string>();
-let userColors = new Map<string, string>();
-
 function parseContent(data: TwitchPrivateMessage) {
   const parsed = data.parseEmotes();
   const message = parsed.map((part) => {
     if (part.type === "emote")
-      return `<span class="emote" style="background-image: url(https://static-cdn.jtvnw.net/emoticons/v2/${part.id}/static/light/1.0)"></span>`;
+      return `<span class="emote" style="background-image: url(${useTwitchEmote(
+        part.id
+      )})"></span>`;
 
     if (part.type === "cheer") return part.name;
 
-    return encode(part.text)
-      .trim()
-      .replace(/:\w+:|\w+/gi, (sub, o, str: string) => {
-        if (!emotesMap.has(sub)) return sub;
-        const emote = emotesMap.get(sub)!;
-        let template = `<span class="emote" style="background-image: url(${emote})"></span>`;
-        template =
-          str.charAt(o + sub.length) === " " ? template + "&nbsp;" : template;
+    return (
+      encode(part.text)
+        .trim()
+        /* parse emotes */
+        .replace(/:\w+:|\w+/gi, (sub, pos, str: string) => {
+          if (!isEmote(sub)) return sub;
+          const emote = getEmote(sub);
+          let template = `<span class="emote" style="background-image: url(${emote})"></span>`;
+          template =
+            str.charAt(pos + sub.length) === " "
+              ? template + "&nbsp;"
+              : template;
 
-        return template;
-      })
-      .replace(/@\w+/gi, (sub) => {
-        if (userColors.has(sub.slice(1)))
-          return `<b style="color: ${userColors.get(sub.slice(1))}">${sub}</b>`;
-        return `<b>${sub}</b>`;
-      });
+          return template;
+        })
+        /* match eligible twitch nicknames with(or without) at sign */
+        .replace(/@?\w{4,25}/gi, (sub) => {
+          const nick = sub[0] === "@" ? sub.slice(1) : sub;
+          if (checkForUserColor(nick))
+            return `<b style="color: ${getUserColor(nick)}">${sub}</b>`;
+          else if (sub[0] === "@") return `<b>${sub}</b>`;
+          else return sub;
+        })
+    );
   });
 
   return message.join("&nbsp;");
 }
 
-async function prepare() {
-  const channel_data = (await (
-    await fetch(
-      `https://nightdev.com/api/1/kapchat/channels/${CHANNEL}/bootstrap`
-    )
-  ).json()) as {
-    badges: { [badge: string]: { [size: string]: string } };
-    channel: { id: string };
-  };
-
-  badgesMap = new Map(Object.entries(channel_data.badges));
-
-  const bttvGlobalEmotesData = (await (
-    await fetch(`https://api.betterttv.net/3/cached/emotes/global`)
-  ).json()) as { code: string; id: string }[];
-
-  const bttvEmotesData = (await (
-    await fetch(
-      `https://api.betterttv.net/3/cached/users/twitch/${channel_data.channel.id}`
-    )
-  ).json()) as {
-    channelEmotes: { id: string; code: string; imageType: string }[];
-    sharedEmotes: { id: string; code: string; imageType: string }[];
-  };
-
-  const bttvEmotes = [
-    ...bttvGlobalEmotesData.map((emote) => [
-      emote.code,
-      `https://cdn.betterttv.net/emote/${emote.id}/1x`,
-    ]),
-    ...bttvEmotesData.channelEmotes.map((emote) => [
-      emote.code,
-      `https://cdn.betterttv.net/emote/${emote.id}/1x`,
-    ]),
-    ...bttvEmotesData.sharedEmotes.map((emote) => [
-      emote.code,
-      `https://cdn.betterttv.net/emote/${emote.id}/1x`,
-    ]),
-  ];
-
-  const ffzGlobalEmotesData = (await (
-    await fetch(`https://api.betterttv.net/3/cached/frankerfacez/emotes/global`)
-  ).json()) as {
-    code: string;
-    images: { "1x": string; "2x": string | null; "4x": string | null };
-  }[];
-
-  const ffzUserEmotesData = (await (
-    await fetch(
-      `https://api.betterttv.net/3/cached/frankerfacez/users/twitch/${channel_data.channel.id}`
-    )
-  ).json()) as {
-    code: string;
-    images: { "1x": string; "2x": string | null; "4x": string | null };
-  }[];
-
-  const ffzEmotes = [
-    ...ffzGlobalEmotesData.map((emote) => [emote.code, emote.images["1x"]]),
-    ...ffzUserEmotesData.map((emote) => [emote.code, emote.images["1x"]]),
-  ];
-
-  emotesMap = new Map([...bttvEmotes, ...ffzEmotes] as [string, string][]);
-
-  await chat.connect();
-}
-
 setStyles();
-prepare();
+const channelID = await fetchBadges(CHANNEL);
+await fetchEmotes(channelID);
+console.log("connecting to chat...");
+await chat.connect();
