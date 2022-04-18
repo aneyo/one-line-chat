@@ -10,7 +10,7 @@ import {
 } from "./assets/emotes";
 import { checkForUserColor, getUserColor, setUserColor } from "./assets/users";
 import { setStyles } from "./dimensions";
-import { CHANNEL, SCROLL_SPEED, TIMEOUT } from "./misc";
+import { CHANNEL, SCROLL_SPEED, TIMEOUT, USE_HD_EMOTES } from "./misc";
 import "./style.scss";
 
 document.title = "#" + CHANNEL;
@@ -178,7 +178,8 @@ function parseContent(data: TwitchPrivateMessage) {
   const message = parsed.map((part) => {
     if (part.type === "emote")
       return `<span class="emote" style="background-image: url(${useTwitchEmote(
-        part.id
+        part.id,
+        USE_HD_EMOTES ? "3" : "1"
       )})"></span>`;
 
     if (part.type === "cheer") return part.name;
