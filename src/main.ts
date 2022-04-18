@@ -83,7 +83,7 @@ function showMessage(message: TwitchPrivateMessage) {
       const badge = getBadge(badgeName, badgeType);
       if (!badge) return "";
 
-      return `<span class="badge ${badgeName}" style="background-image: url(${badge})"></span>`;
+      return `<img class="badge ${badgeName}" src="${badge}"/>`;
     }
   );
 
@@ -185,19 +185,12 @@ function parseContent(data: TwitchPrivateMessage) {
     if (part.type === "cheer") return part.name;
 
     return (
-      encode(part.text)
-        .trim()
+      encode(part.text.trim())
         /* parse emotes */
-        .replace(/:\w+:|\w+/gi, (sub, pos, str: string) => {
+        .replace(/:\w+:|\w+/gi, (sub) => {
           if (!isEmote(sub)) return sub;
           const emote = getEmote(sub);
-          let template = `<img class="emote" src="${emote}"/>`;
-          template =
-            str.charAt(pos + sub.length) === " "
-              ? template + "&nbsp;"
-              : template;
-
-          return template;
+          return `<img class="emote" src="${emote}"/>`;
         })
         /* match eligible twitch nicknames with(or without) at sign */
         .replace(/@?\w{4,25}/gi, (sub) => {

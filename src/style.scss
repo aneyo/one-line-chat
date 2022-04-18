@@ -5,9 +5,12 @@ body {
   overflow: hidden;
 
   color: #fafafa;
-  font-family: Calibri;
   font-size: 18px;
-  line-height: 1;
+  font-family: "Calibri", Tahoma, Geneva, Verdana, "ＭＳ Ｐゴシック",
+    "MS PGothic", "メイリオ", Meiryo, sans-serif;
+
+  // ! don't use line-height:1 with Calibri font
+  line-height: initial;
 
   &.ingame {
     &::before {
@@ -59,34 +62,32 @@ body {
 }
 
 #chat {
-  margin: var(--margin, 8px);
-
   & > .line {
     display: flex;
     flex-shrink: 0;
-    height: 20px;
 
     position: absolute;
+    left: var(--margin, 8px);
     bottom: var(--margin, 8px);
     max-width: var(--bound, calc(100% - var(--margin, 8px) * 2));
     width: 100%;
 
     & > .user {
       display: flex;
-      flex-shrink: 0;
+      height: 1.25em;
 
       & > .badges {
-        display: flex;
-        gap: 0.15rem;
-        margin-right: 0.25rem;
+        display: inline-block;
+        margin-right: 0.25em;
 
         & > .badge {
-          height: 1.25rem;
-          width: 1.25rem;
-          border-radius: 0.2rem;
+          height: 1.25em;
+          border-radius: 0.15em;
           overflow: hidden;
-          background-size: contain;
-          background-repeat: no-repeat;
+
+          &:not(:last-child) {
+            margin-right: 0.25em;
+          }
         }
       }
 
@@ -97,11 +98,12 @@ body {
       & > .name {
         font-weight: bold;
         overflow: hidden;
+        display: inline-block;
       }
 
       &::after {
         content: ":";
-        margin-right: 0.25rem;
+        margin-right: 0.25em;
       }
     }
 
@@ -115,7 +117,7 @@ body {
 
         & > .emote {
           display: inline-block;
-          height: 1.25rem;
+          height: 1.25em;
           overflow: hidden;
           vertical-align: middle;
         }
@@ -144,7 +146,7 @@ body {
 
 @keyframes show-slide {
   0% {
-    transform: translateY(1.2rem);
+    transform: translateY(1.2em);
     opacity: 0.75;
   }
   100% {
