@@ -14,7 +14,7 @@
 
   - `local` - will display `@ayaya` as `@あやや` or `@aYAYA`
   - `login` - will display `@ayaya` as `@ayaya`
-  - `combo` - will display `@ayaya` as `@あやや (@ayaya)` or `@aYAYA`
+  - `combo` - will display `@ayaya` as `@あやや (ayaya)` or `@aYAYA`
 
 - `nobg` - Hide background gradient. _turned off by default._
 

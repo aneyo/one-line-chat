@@ -186,7 +186,7 @@ function resolveUsername(user: ChatUser) {
     case "combo":
       if (user.displayName.toLocaleLowerCase() === user.userName)
         return user.displayName;
-      else return `${user.displayName} (${user.displayName})`;
+      else return `@${user.displayName} (${user.displayName})`;
 
     case "local":
     case "default":
