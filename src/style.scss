@@ -113,13 +113,16 @@ body {
       text-overflow: ellipsis;
 
       & > .content {
-        white-space: nowrap;
+        display: flex;
+        white-space: pre;
 
         & > .emote {
-          display: inline-block;
           height: 1.25em;
           overflow: hidden;
-          vertical-align: middle;
+
+          & + img:not(:last-child) {
+            margin-right: 0.25em;
+          }
         }
 
         &.scroll {
