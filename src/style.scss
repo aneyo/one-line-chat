@@ -4,6 +4,11 @@ body {
   height: 100vh;
   overflow: hidden;
 
+  color: #fafafa;
+  font-family: Calibri;
+  font-size: 18px;
+  line-height: 1;
+
   &.ingame {
     &::before {
       opacity: 0;
@@ -55,12 +60,6 @@ body {
 
 #chat {
   margin: var(--margin, 8px);
-
-  color: #fafafa;
-
-  font-family: Calibri;
-  font-size: 18px;
-  line-height: 1;
 
   & > .line {
     display: flex;
@@ -117,9 +116,6 @@ body {
         & > .emote {
           display: inline-block;
           height: 1.25rem;
-          width: 1.25rem;
-          background-size: contain;
-          background-repeat: no-repeat;
           overflow: hidden;
           vertical-align: middle;
         }

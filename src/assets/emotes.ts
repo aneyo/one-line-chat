@@ -67,8 +67,13 @@ export function getEmote(code: string) {
   return emotesMap.get(code)!;
 }
 
-export function useTwitchEmote(code: string, size = "1") {
-  return `https://static-cdn.jtvnw.net/emoticons/v2/${code}/static/light/${
+export function useTwitchEmote(
+  code: string,
+  size = "1",
+  format: "default" | "static" | "animated" = "default",
+  theme: "dark" | "light" = "dark"
+) {
+  return `https://static-cdn.jtvnw.net/emoticons/v2/${code}/${format}/${theme}/${
     size || "1"
   }.0`;
 }

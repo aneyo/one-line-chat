@@ -177,10 +177,10 @@ function parseContent(data: TwitchPrivateMessage) {
   const parsed = data.parseEmotes();
   const message = parsed.map((part) => {
     if (part.type === "emote")
-      return `<span class="emote" style="background-image: url(${useTwitchEmote(
+      return `<img class="emote" src="${useTwitchEmote(
         part.id,
         USE_HD_EMOTES ? "3" : "1"
-      )})"></span>`;
+      )}"/>`;
 
     if (part.type === "cheer") return part.name;
 
@@ -191,7 +191,7 @@ function parseContent(data: TwitchPrivateMessage) {
         .replace(/:\w+:|\w+/gi, (sub, pos, str: string) => {
           if (!isEmote(sub)) return sub;
           const emote = getEmote(sub);
-          let template = `<span class="emote" style="background-image: url(${emote})"></span>`;
+          let template = `<img class="emote" src="${emote}"/>`;
           template =
             str.charAt(pos + sub.length) === " "
               ? template + "&nbsp;"
