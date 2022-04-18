@@ -102,7 +102,6 @@ function showMessage(message: TwitchPrivateMessage) {
   if (cl <= ml) {
     showTimer = window.setTimeout(() => {
       hideMessage(current!);
-      showing = false;
 
       if (messages.length > 0) nextMessage();
     }, TIMEOUT);
@@ -125,7 +124,6 @@ function showMessage(message: TwitchPrivateMessage) {
           // end with timer
           showTimer = window.setTimeout(() => {
             hideMessage(current!);
-            showing = false;
 
             if (messages.length > 0) nextMessage();
           }, TIMEOUT / 2 / timeout);
@@ -150,9 +148,17 @@ function showMessage(message: TwitchPrivateMessage) {
   showTimer = window.setTimeout(() => contel.classList.add("scroll"), 1500);
 }
 function hideMessage(message: TwitchPrivateMessage) {
-  const el = document.getElementById(message.id)!;
-  el.addEventListener("animationend", () => block.removeChild(el));
+  const el = document.getElementById(message.id);
+  if (!el) return;
+
+  el.addEventListener("animationend", () =>
+    el
+      ? block.removeChild(el)
+      : console.warn("cannot remove", el, "from", block)
+  );
   el.className = "line hide";
+
+  showing = false;
 }
 
 let badgesMap = new Map<string, { [size: string]: string }>();
