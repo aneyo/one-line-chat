@@ -55,7 +55,6 @@ body {
 
 #shower {
   margin: var(--margin, 8px);
-  // max-width: calc(100% - var(--margin, 8px) * 2);
 
   color: #fafafa;
 
@@ -114,10 +113,6 @@ body {
 
       & > .content {
         white-space: nowrap;
-        // overflow: hidden;
-        // text-overflow: ellipsis;
-
-        // display: flex;
 
         & > .emote {
           display: inline-block;
@@ -140,19 +135,21 @@ body {
     }
 
     &.show {
-      animation: slide-top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+      z-index: 1;
+      animation: slide-top 250ms ease-out both;
     }
 
     &.hide {
-      animation: just-hide 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+      z-index: 0;
+      animation: just-hide 150ms linear both;
     }
   }
 }
 
 @keyframes slide-top {
   0% {
-    transform: translateY(1.5rem);
-    opacity: 0.5;
+    transform: translateY(1.2rem);
+    opacity: 0.75;
   }
   100% {
     transform: translateY(0px);
