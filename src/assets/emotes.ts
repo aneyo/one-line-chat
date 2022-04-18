@@ -1,52 +1,58 @@
+import { USE_HD_EMOTES } from "../misc";
+
 let emotesMap = new Map<string, string>();
 
+interface BTTVEmote {
+  id: string;
+  code: string;
+  imageType: string;
+}
+interface FFZEmote {
+  code: string;
+  images: { "1x": string; "2x": string | null; "4x": string | null };
+}
+
 export async function fetchEmotes(channel: string) {
+  const emoteSize = USE_HD_EMOTES ? "3" : "1";
+
   const bttvGlobalEmotesData = (await (
     await fetch(`https://api.betterttv.net/3/cached/emotes/global`)
-  ).json()) as { code: string; id: string }[];
+  ).json()) as BTTVEmote[];
 
   const bttvEmotesData = (await (
     await fetch(`https://api.betterttv.net/3/cached/users/twitch/${channel}`)
   ).json()) as {
-    channelEmotes: { id: string; code: string; imageType: string }[];
-    sharedEmotes: { id: string; code: string; imageType: string }[];
+    channelEmotes: BTTVEmote[];
+    sharedEmotes: BTTVEmote[];
   };
 
   const bttvEmotes = [
-    ...bttvGlobalEmotesData.map((emote) => [
-      emote.code,
-      `https://cdn.betterttv.net/emote/${emote.id}/1x`,
-    ]),
-    ...bttvEmotesData.channelEmotes.map((emote) => [
-      emote.code,
-      `https://cdn.betterttv.net/emote/${emote.id}/1x`,
-    ]),
-    ...bttvEmotesData.sharedEmotes.map((emote) => [
-      emote.code,
-      `https://cdn.betterttv.net/emote/${emote.id}/1x`,
-    ]),
-  ];
+    ...bttvGlobalEmotesData,
+    ...bttvEmotesData.channelEmotes,
+    ...bttvEmotesData.sharedEmotes,
+  ].map((emote) => [
+    emote.code,
+    `https://cdn.betterttv.net/emote/${emote.id}/${emoteSize}x`,
+  ]);
 
   const ffzGlobalEmotesData = (await (
     await fetch(`https://api.betterttv.net/3/cached/frankerfacez/emotes/global`)
-  ).json()) as {
-    code: string;
-    images: { "1x": string; "2x": string | null; "4x": string | null };
-  }[];
+  ).json()) as FFZEmote[];
 
   const ffzUserEmotesData = (await (
     await fetch(
       `https://api.betterttv.net/3/cached/frankerfacez/users/twitch/${channel}`
     )
-  ).json()) as {
-    code: string;
-    images: { "1x": string; "2x": string | null; "4x": string | null };
-  }[];
+  ).json()) as FFZEmote[];
 
-  const ffzEmotes = [
-    ...ffzGlobalEmotesData.map((emote) => [emote.code, emote.images["1x"]]),
-    ...ffzUserEmotesData.map((emote) => [emote.code, emote.images["1x"]]),
-  ];
+  const ffzEmotes = [...ffzGlobalEmotesData, ...ffzUserEmotesData].map(
+    (emote) => [
+      emote.code,
+      USE_HD_EMOTES
+        ? emote.images["4x"] || emote.images["2x"] || emote.images["1x"]
+        : emote.images["1x"],
+    ]
+  );
 
   emotesMap = new Map([...bttvEmotes, ...ffzEmotes] as [string, string][]);
   console.log("fetched", emotesMap.size, "emotes");
