@@ -18,7 +18,7 @@
 
 - `bg=<gradient|solid|none>` - Set widget background. could be overwritten using the `body.background.<bg>` class. _defaults to `gradient`._
 
-- `gosu=<addr?>` - Use [**gosumemory**](https://github.com/l3lackShark/gosumemory) to hide background gradient while playing, unless `nobg` is presented. if no address specified, use default `ws://127.0.0.1:24050/ws`. _turned off by default._
+- `gosu=<addr?>` - Use [**gosumemory**](https://github.com/l3lackShark/gosumemory) to hide background gradient while playing. works only with `bg` set to `gradient|solid`. if no address specified, use default `ws://127.0.0.1:24050/ws`. _turned off by default._
 
 - `badges=<preload|ondemand>` - Should widget preload all available(for current channel) twitch badges or load them on demand. `preload` may cause slow startup and some memory usage but will show badges instantly. _defaults to `ondemand`._
 
