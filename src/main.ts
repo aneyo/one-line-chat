@@ -203,6 +203,9 @@ function resolveUsername(user: ChatUser) {
 }
 
 function parseContent(data: TwitchPrivateMessage) {
+  // * eh
+  data.content.value = data.content.value.replaceAll(/\u0001(\w+)?/gi, "");
+
   const parsed = data.parseEmotes();
   const message = parsed.map((part) => {
     if (part.type === "emote")
