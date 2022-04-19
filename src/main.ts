@@ -145,17 +145,25 @@ function showMessage(message: TwitchPrivateMessage) {
 
   // set animation
   const speed = (path / MESSAGE_SCROLL_SPEED) * 1000;
+  const halfTimeout = MESSAGE_TIMEOUT / 2;
+  const scrollStart = Date.now();
 
   contel.setAttribute("style", `--dur: ${speed}ms; --target: ${path}px`);
   contel.addEventListener(
     "animationend",
     () => {
-      // end with timer
+      // end of scrolling animation
+      const scrollTime = Date.now() - scrollStart;
+      const scrollTimeout =
+        scrollTime > halfTimeout
+          ? halfTimeout
+          : halfTimeout + (halfTimeout - scrollTime);
+
       showTimer = window.setTimeout(() => {
         hideMessage(current!);
 
         if (messages.length > 0) nextMessage();
-      }, MESSAGE_TIMEOUT);
+      }, scrollTimeout);
     },
     {
       once: true,
