@@ -1,0 +1,23 @@
+body.design {
+  & > #chat {
+    & > .line {
+      background: rgba(255, 0, 0, 0.25);
+
+      & > .message {
+        & > .content {
+          background: rgba(255, 115, 0, 0.5);
+        }
+      }
+    }
+
+    &::before {
+      content: "";
+      height: calc(100vh - var(--margin, 8px));
+      position: absolute;
+      bottom: var(--margin, 8px);
+      left: var(--margin, 8px);
+      width: var(--bound, calc(100% - var(--margin, 8px) * 2));
+      background: rgba(255, 0, 0, 0.25);
+    }
+  }
+}

@@ -1,0 +1,37 @@
+@mixin background-mixin {
+  content: "";
+  position: absolute;
+  width: 100vw;
+  z-index: -1;
+  left: 0;
+  opacity: 1;
+  transition: opacity 250ms ease-in-out;
+}
+
+body.background {
+  &.gradient::before {
+    @include background-mixin();
+    background-image: linear-gradient(
+      hsla(0, 0%, 0%, 0) 50%,
+      hsla(0, 0%, 0%, 0.9) 95%,
+      #000 105%
+    );
+
+    top: 0;
+    height: 100vh;
+  }
+
+  &.solid::before {
+    @include background-mixin();
+    background-color: hsla(0, 0%, 0%, 0.5);
+
+    bottom: 0;
+    height: calc(var(--margin) * 2 + 1.25em);
+  }
+
+  &.in-game {
+    &::before {
+      opacity: 0;
+    }
+  }
+}

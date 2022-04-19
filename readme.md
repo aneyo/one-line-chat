@@ -16,11 +16,13 @@
   - `local` - will display user `ayaya` as `あやや` or `aYAYA`.
   - `combo` - will display user `ayaya` as `あやや (ayaya)` or `aYAYA`.
 
-- `nobg` - Hide background gradient. _turned off by default._
+- `bg=<gradient|solid|none>` - Set widget background. could be overwritten using the `body.background.<bg>` class. _defaults to `gradient`._
 
 - `gosu=<addr?>` - Use [**gosumemory**](https://github.com/l3lackShark/gosumemory) to hide background gradient while playing, unless `nobg` is presented. if no address specified, use default `ws://127.0.0.1:24050/ws`. _turned off by default._
 
-- `hd` - Use **HD**(3x/4x) emotes when possible. _turned off by default._
+- `badges=<preload|ondemand>` - Should widget preload all available(for current channel) twitch badges or load them on demand. `preload` may cause slow startup and some memory usage but will show badges instantly. _defaults to `ondemand`._
+
+- `emotes=<sd|hd>` - Set emotes quality to `SD/HD` when possible. _defaults to `sd`._
 
 - `margin=<number>` - Message line margin in pixels. _defaults to `8` pixels._
 
@@ -30,5 +32,5 @@
 
 ## Examples
 
-- [`https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&nobg`](https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&gosu)
-- [`https://aneyo.github.io/one-line-chat/?channel=aneyuu&bound=500&margin=15&gosu&hd`](https://aneyo.github.io/one-line-chat/?channel=aneyuu&bound=500&margin=15&gosu&hd)
+- [`https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&bg=none`](https://aneyo.github.io/one-line-chat/?channel=pondelinp&bound=815&margin=12&bg=none)
+- [`https://aneyo.github.io/one-line-chat/?channel=aneyuu&bound=500&margin=15&gosu&emotes=hd`](https://aneyo.github.io/one-line-chat/?channel=aneyuu&bound=500&margin=15&gosu&emotes=hd)

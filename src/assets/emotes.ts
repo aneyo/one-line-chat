@@ -1,4 +1,5 @@
-import { USE_HD_EMOTES } from "../misc";
+import { EMOTES_QUALITY } from "../params";
+import { preloadImages } from "./preload";
 
 let emotesMap = new Map<string, string>();
 
@@ -12,27 +13,32 @@ interface FFZEmote {
   images: { "1x": string; "2x": string | null; "4x": string | null };
 }
 
+const TWITCH_EMOTE_SIZE = {
+  sd: "1.0",
+  hd: "3.0",
+};
+
+const BTTV_EMOTE_SIZE = {
+  sd: "1x",
+  hd: "3x",
+};
+
 export async function fetchEmotes(channel: string) {
-  const emoteSize = USE_HD_EMOTES ? "3" : "1";
+  if (EMOTES_QUALITY === "hd") console.log("fetching HD emotes.");
 
   const bttvGlobalEmotesData = (await (
     await fetch(`https://api.betterttv.net/3/cached/emotes/global`)
   ).json()) as BTTVEmote[];
 
-  const bttvEmotesData = (await (
-    await fetch(`https://api.betterttv.net/3/cached/users/twitch/${channel}`)
-  ).json()) as {
-    channelEmotes: BTTVEmote[];
-    sharedEmotes: BTTVEmote[];
-  };
+  const bttvUserData = await fetchBTTVUserEmotes(channel);
 
   const bttvEmotes = [
     ...bttvGlobalEmotesData,
-    ...bttvEmotesData.channelEmotes,
-    ...bttvEmotesData.sharedEmotes,
+    ...bttvUserData.channelEmotes,
+    ...bttvUserData.sharedEmotes,
   ].map((emote) => [
     emote.code,
-    `https://cdn.betterttv.net/emote/${emote.id}/${emoteSize}x`,
+    `https://cdn.betterttv.net/emote/${emote.id}/${BTTV_EMOTE_SIZE[EMOTES_QUALITY]}`,
   ]);
 
   const ffzGlobalEmotesData = (await (
@@ -48,7 +54,7 @@ export async function fetchEmotes(channel: string) {
   const ffzEmotes = [...ffzGlobalEmotesData, ...ffzUserEmotesData].map(
     (emote) => [
       emote.code,
-      USE_HD_EMOTES
+      EMOTES_QUALITY === "hd"
         ? emote.images["4x"] || emote.images["2x"] || emote.images["1x"]
         : emote.images["1x"],
     ]
@@ -62,6 +68,29 @@ export async function fetchEmotes(channel: string) {
   return emotesMap;
 }
 
+const bttvDefaultData = {
+  channelEmotes: [],
+  sharedEmotes: [],
+};
+
+async function fetchBTTVUserEmotes(channel: string) {
+  try {
+    const bttvEmotesData = (await (
+      await fetch(`https://api.betterttv.net/3/cached/users/twitch/${channel}`)
+    ).json()) as {
+      channelEmotes: BTTVEmote[];
+      sharedEmotes: BTTVEmote[];
+      message?: string;
+    };
+
+    if (bttvEmotesData.message) return bttvDefaultData;
+
+    return bttvEmotesData;
+  } catch {
+    return bttvDefaultData;
+  }
+}
+
 export function isEmote(sub: string) {
   return emotesMap.has(sub);
 }
@@ -72,36 +101,14 @@ export function getEmote(code: string) {
 
 export function useTwitchEmote(
   code: string,
-  size = "1",
   format: "default" | "static" | "animated" = "default",
   theme: "dark" | "light" = "dark"
 ) {
-  return `https://static-cdn.jtvnw.net/emoticons/v2/${code}/${format}/${theme}/${
-    size || "1"
-  }.0`;
+  return `https://static-cdn.jtvnw.net/emoticons/v2/${code}/${format}/${theme}/${TWITCH_EMOTE_SIZE[EMOTES_QUALITY]}`;
 }
-
-let preloaded = [];
 
 export async function preloadEmotes() {
   console.log("preloading emotes...");
-
-  preloaded = (
-    (await Promise.allSettled(
-      [...emotesMap.values()].map((emote) => asyncImageLoader(emote))
-    )) as { status: string; value: HTMLImageElement }[]
-  )
-    .filter((emote) => emote.status === "fulfilled")
-    .map((emote) => emote.value);
-
-  console.log("preloaded", preloaded.length, "emotes.");
-}
-
-function asyncImageLoader(url: string) {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.src = url;
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error("Could not load image"));
-  });
+  const preloaded = await preloadImages([...emotesMap.values()]);
+  console.log("preloaded", preloaded, "emotes.");
 }

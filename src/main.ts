@@ -9,21 +9,28 @@ import {
   useTwitchEmote,
 } from "./assets/emotes";
 import { checkForUserColor, getUserColor, setUserColor } from "./assets/users";
-import { setStyles } from "./dimensions";
+import { connectToGOSUMEM } from "./misc/gosu";
 import {
-  CHANNEL,
+  CHAT_CHANNEL,
+  CHAT_MARGIN,
+  CHAT_MAX_WIDTH,
   NAME_DISPAY_MODE,
-  SCROLL_SPEED,
-  TIMEOUT,
-  USE_HD_EMOTES,
-} from "./misc";
-import "./style.scss";
+  MESSAGE_SCROLL_SPEED,
+  MESSAGE_TIMEOUT,
+  USE_DESIGN_MODE,
+  BACKGROUND_TYPE,
+  USE_GOSU,
+} from "./params";
 
-document.title = "#" + CHANNEL;
-console.log("will join", "#" + CHANNEL, "shortly");
+import "./styles/main.scss";
+import "./styles/debug.scss";
+import "./styles/background.scss";
+
+document.title = "#" + CHAT_CHANNEL;
+console.log("will join", "#" + CHAT_CHANNEL, "shortly");
 
 const block = document.getElementById("chat")!;
-const chat = new ChatClient({ channels: [CHANNEL] });
+const chat = new ChatClient({ channels: [CHAT_CHANNEL] });
 
 chat.onConnect(() => console.log("connected to chat."));
 chat.onJoin((e) => console.log("joined", e));
@@ -122,48 +129,32 @@ function showMessage(message: TwitchPrivateMessage) {
       hideMessage(current!);
 
       if (messages.length > 0) nextMessage();
-    }, TIMEOUT);
+    }, MESSAGE_TIMEOUT);
     return;
   }
 
   const path = cl - ml;
 
   // set animation
-  const speed = (path / SCROLL_SPEED) * 1000;
-  const timeout = cl / ml;
+  const speed = (path / MESSAGE_SCROLL_SPEED) * 1000;
 
   contel.setAttribute("style", `--dur: ${speed}ms; --target: ${path}px`);
   contel.addEventListener(
     "animationend",
     () => {
-      contel.addEventListener(
-        "animationend",
-        () => {
-          // end with timer
-          showTimer = window.setTimeout(() => {
-            hideMessage(current!);
-
-            if (messages.length > 0) nextMessage();
-          }, TIMEOUT / 2 / timeout);
-          return;
-        },
-        {
-          once: true,
-        }
-      );
-
+      // end with timer
       showTimer = window.setTimeout(() => {
-        // set second animation
-        contel.classList.remove("scroll");
-        contel.classList.add("scroll-return");
-      }, 1500);
+        hideMessage(current!);
+
+        if (messages.length > 0) nextMessage();
+      }, MESSAGE_TIMEOUT);
     },
     {
       once: true,
     }
   );
 
-  showTimer = window.setTimeout(() => contel.classList.add("scroll"), 1500);
+  contel.classList.add("scroll");
 }
 function hideMessage(message: TwitchPrivateMessage) {
   const el = document.getElementById(message.id);
@@ -199,10 +190,7 @@ function parseContent(data: TwitchPrivateMessage) {
   const parsed = data.parseEmotes();
   const message = parsed.map((part) => {
     if (part.type === "emote")
-      return `<img class="emote" src="${useTwitchEmote(
-        part.id,
-        USE_HD_EMOTES ? "3" : "1"
-      )}"/>`;
+      return `<img class="emote" src="${useTwitchEmote(part.id)}"/>`;
 
     if (part.type === "cheer") return part.name;
 
@@ -228,8 +216,23 @@ function parseContent(data: TwitchPrivateMessage) {
   return message.join("&nbsp;");
 }
 
-setStyles();
-const channelID = await fetchBadges(CHANNEL);
+(function setStyles() {
+  document.body.classList.toggle("design", USE_DESIGN_MODE);
+  document.body.classList.add("background", BACKGROUND_TYPE);
+
+  document.body.setAttribute(
+    "style",
+    [
+      `--margin: ${CHAT_MARGIN()}px`,
+      CHAT_MAX_WIDTH() ? `--bound: ${CHAT_MAX_WIDTH()}px` : null,
+    ]
+      .filter((s) => !!s)
+      .join(";")
+  );
+})();
+
+const channelID = await fetchBadges(CHAT_CHANNEL);
 await fetchEmotes(channelID);
 console.log("connecting to chat...");
 await chat.connect();
+if (USE_GOSU) connectToGOSUMEM();
