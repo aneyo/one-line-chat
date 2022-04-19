@@ -40,10 +40,18 @@ let current: TwitchPrivateMessage | undefined = undefined;
 let showing = false;
 let showTimer = -1;
 
-chat.onMessage((_, __, ___, data) => {
+function messageHandler(
+  _: string,
+  __: string,
+  ___: string,
+  data: TwitchPrivateMessage
+) {
   messages.push(data);
   if (!showing) nextMessage();
-});
+}
+
+chat.onAction(messageHandler);
+chat.onMessage(messageHandler);
 
 chat.onMessageRemove((_, id) => {
   messages = messages.filter((msg) => msg.id !== id);
