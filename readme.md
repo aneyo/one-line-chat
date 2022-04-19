@@ -12,9 +12,9 @@
 
 - `display=<local|login|combo>` - How user nickname should be displayed. _defaults to `local`._
 
-  - `local` - will display `@ayaya` as `@あやや` or `@aYAYA`
-  - `login` - will display `@ayaya` as `@ayaya`
-  - `combo` - will display `@ayaya` as `@あやや (ayaya)` or `@aYAYA`
+  - `login` - will display user `ayaya` as it is.
+  - `local` - will display user `ayaya` as `あやや` or `aYAYA`.
+  - `combo` - will display user `ayaya` as `あやや (ayaya)` or `aYAYA`.
 
 - `nobg` - Hide background gradient. _turned off by default._
 
