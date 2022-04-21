@@ -9,7 +9,7 @@ import {
   useTwitchEmote,
 } from "./assets/emotes";
 import { checkForUserColor, getUserColor, setUserColor } from "./assets/users";
-import { connectToGOSUMEM } from "./misc/gosu";
+import { connectToGOSUMEM, onGameStatusChanged } from "./misc/gosu";
 import {
   CHAT_CHANNEL,
   CHAT_MARGIN,
@@ -96,6 +96,7 @@ function nextMessage(): any {
 function showMessage(message: TwitchPrivateMessage) {
   const el = document.createElement("div");
 
+  document.body.classList.toggle("hide", isInGame);
   setUserColor(message.userInfo.userName, message.userInfo.color);
 
   const badgesStringJoined = [...message.userInfo.badges.entries()].map(
@@ -182,6 +183,7 @@ function hideMessage(message: TwitchPrivateMessage) {
       : console.warn("cannot remove", el, "from", block)
   );
   el.className = "line hide";
+  document.body.classList.toggle("hide", messages.length < 1);
 
   showing = false;
 }
@@ -249,6 +251,17 @@ function parseContent(data: TwitchPrivateMessage) {
       .join(";")
   );
 })();
+
+// * hide background at start
+document.body.classList.toggle("hide", true);
+
+let isInGame = false;
+onGameStatusChanged((inGame) => {
+  isInGame = inGame;
+  if (showing || messages.length > 0)
+    document.body.classList.toggle("hide", inGame);
+  else document.body.classList.toggle("hide", true);
+});
 
 const channelID = await fetchBadges(CHAT_CHANNEL);
 await fetchEmotes(channelID);

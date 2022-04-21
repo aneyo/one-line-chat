@@ -29,7 +29,7 @@ body.background {
     height: calc(var(--margin) * 2 + 1.25em);
   }
 
-  &.in-game {
+  &.hide {
     &::before {
       opacity: 0;
     }

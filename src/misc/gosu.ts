@@ -16,7 +16,7 @@ export function connectToGOSUMEM() {
     const isInGame =
       (JSON.parse(e.data) as { menu: { state: number } }).menu.state === 2;
 
-    document.body.classList.toggle("in-game", isInGame);
+    if (action) action(isInGame);
   });
 
   ws.addEventListener("error", () => ws!.close());
@@ -24,4 +24,10 @@ export function connectToGOSUMEM() {
     console.log("connected to gosu!");
     ws!.removeEventListener("error", () => ws!.close());
   });
+}
+
+let action: (inGame: boolean) => any | undefined;
+
+export function onGameStatusChanged(func: (inGame: boolean) => any) {
+  action = func;
 }
