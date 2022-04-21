@@ -20,6 +20,8 @@ import {
   USE_DESIGN_MODE,
   BACKGROUND_TYPE,
   USE_GOSU,
+  LOAD_EMOTES,
+  LOAD_BADGES,
 } from "./params";
 
 import "./styles/main.scss";
@@ -99,15 +101,15 @@ function showMessage(message: TwitchPrivateMessage) {
   document.body.classList.toggle("hide", isInGame);
   setUserColor(message.userInfo.userName, message.userInfo.color);
 
-  const badgesStringJoined = [...message.userInfo.badges.entries()].map(
-    ([badgeName, badgeType]) => {
-      if (!isKnownBadge(badgeName)) return "";
-      const badge = getBadge(badgeName, badgeType);
-      if (!badge) return "";
+  const badgesStringJoined = LOAD_BADGES
+    ? [...message.userInfo.badges.entries()].map(([badgeName, badgeType]) => {
+        if (!isKnownBadge(badgeName)) return "";
+        const badge = getBadge(badgeName, badgeType);
+        if (!badge) return "";
 
-      return `<img class="badge ${badgeName}" src="${badge}"/>`;
-    }
-  );
+        return `<img class="badge ${badgeName}" src="${badge}"/>`;
+      })
+    : [];
 
   const userPrefix =
     badgesStringJoined.length > 0
@@ -207,6 +209,8 @@ function resolveUsername(user: ChatUser) {
 function parseContent(data: TwitchPrivateMessage) {
   // * eh
   data.content.value = data.content.value.replaceAll(/\u0001(\w+)?/gi, "");
+
+  if (!LOAD_EMOTES) return data.content.value;
 
   const parsed = data.parseEmotes();
   const message = parsed.map((part) => {

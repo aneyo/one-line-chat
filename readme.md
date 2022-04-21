@@ -20,15 +20,15 @@
 
 - `gosu=<addr?>` - Use [**gosumemory**](https://github.com/l3lackShark/gosumemory) to hide background gradient while playing. works only with `bg` set to `gradient|solid`. if no address specified, use default `ws://127.0.0.1:24050/ws`. _turned off by default._
 
-- `badges=<preload|ondemand>` - Should widget preload all available(for current channel) twitch badges or load them on demand. `preload` may cause slow startup and some memory usage but will show badges instantly. _defaults to `ondemand`._
+- `badges=<preload|ondemand|none>` - Should widget preload all available(for current channel) twitch badges or load them on demand. `preload` may cause slow startup and some memory usage but will show badges instantly. if set to `none`, badges will be hidden. _defaults to `ondemand`._
 
-- `emotes=<sd|hd>` - Set emotes quality to `SD/HD` when possible. _defaults to `sd`._
+- `emotes=<none|sd|hd>` - Set emotes quality to `SD/HD` when possible. if set to `none`, no emotes will be parsed. _defaults to `sd`._
 
 - `margin=<number>` - Message line margin in pixels. _defaults to `8` pixels._
 
 - `bound=<number>` - Maximum width of the message line in pixels. if message is wider than bound, use scrolling. _defaults to the width of viewport minus `margin*2`._
 
-- `design` - Show message line maximum width with color. _turned off by default._
+- `design` - Show message line maximum width with color. used for debug. _turned off by default._
 
 ## Examples
 

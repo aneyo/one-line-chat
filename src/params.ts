@@ -1,5 +1,11 @@
 export const query = new URLSearchParams(document.location.search);
 
+export type NameDisplayMode = "local" | "login" | "combo" | "default";
+export type BackgroundType = "gradient" | "solid" | "none";
+export type EmoteQuality = "sd" | "hd";
+export type EmotesMode = "none" | EmoteQuality;
+export type BadgesMode = "none" | "ondemand" | "preload";
+
 export const CHAT_CHANNEL = query.has("channel")
   ? query.get("channel")!
   : "xqcow";
@@ -12,7 +18,7 @@ export const MESSAGE_SCROLL_SPEED = query.has("speed")
   ? +query.get("speed")!
   : 80;
 export const NAME_DISPAY_MODE = query.has("display")
-  ? (query.get("display") as "local" | "login" | "combo") || "default"
+  ? (query.get("display") as NameDisplayMode) || "default"
   : "default";
 
 /* style */
@@ -24,7 +30,7 @@ export const CHAT_MAX_WIDTH = () =>
 
 /* background */
 export const BACKGROUND_TYPE = query.has("bg")
-  ? (query.get("bg") as "gradient" | "solid" | "none") || "gradient"
+  ? (query.get("bg") as BackgroundType) || "gradient"
   : "gradient";
 
 /* gosu */
@@ -34,9 +40,12 @@ export const USE_GOSU = query.has("gosu")
 export const GOSU_ADDR = query.get("gosu")! || "ws://127.0.0.1:24050/ws";
 
 /* misc */
-export const EMOTES_QUALITY = query.has("emotes")
-  ? (query.get("emotes") as "sd" | "hd") || "sd"
+export const EMOTES_MODE: EmotesMode = query.has("emotes")
+  ? (query.get("emotes") as EmotesMode) || "sd"
   : "sd";
-export const PRELOAD_BADGES = query.has("badges")
-  ? query.get("badges")! === "preload"
-  : false;
+export const BADGES_MODE: BadgesMode = query.has("badges")
+  ? (query.get("badges") as BadgesMode) || "ondemand"
+  : "ondemand";
+export const LOAD_EMOTES = EMOTES_MODE !== "none";
+export const LOAD_BADGES = BADGES_MODE !== "none";
+export const PRELOAD_BADGES = BADGES_MODE === "preload";

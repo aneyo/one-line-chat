@@ -1,4 +1,4 @@
-import { PRELOAD_BADGES } from "../params";
+import { LOAD_BADGES, PRELOAD_BADGES } from "../params";
 import { preloadImages } from "./preload";
 
 let badgesMap = new Map<string, { [size: string]: string }>();
@@ -12,6 +12,11 @@ export async function fetchBadges(channel: string) {
     badges: { [badge: string]: { [type: string]: string } };
     channel: { id: string };
   };
+
+  if (!LOAD_BADGES) {
+    console.warn("using no-badges mode.");
+    return data.channel.id;
+  }
 
   badgesMap = new Map(Object.entries(data.badges));
   console.log("fetched", badgesMap.size, "badges");
