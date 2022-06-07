@@ -220,7 +220,7 @@ function parseContent(data: TwitchPrivateMessage) {
     if (part.type === "cheer") return part.name;
 
     return (
-      encode(part.text.trim())
+      encode(part.text)
         /* parse emotes */
         .replace(/:\w+:|\w+/gi, (sub) => {
           if (!isEmote(sub)) return sub;
@@ -235,10 +235,14 @@ function parseContent(data: TwitchPrivateMessage) {
           else if (sub[0] === "@") return `<b>${sub}</b>`;
           else return sub;
         })
+        /* trim spaces */
+        .replace(/\s+/, " ")
+        /* haha, replace spaces between nodes with HTML encoded ones */
+        .replace(/>\s</, ">&nbsp;<")
     );
   });
 
-  return message.join("&nbsp;");
+  return message.join("");
 }
 
 setStyles();

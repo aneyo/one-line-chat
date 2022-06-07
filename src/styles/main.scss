@@ -81,10 +81,6 @@ body {
 
           flex-shrink: 0;
           flex-grow: 0;
-
-          & + img:not(:last-child) {
-            margin-right: 0.25em;
-          }
         }
 
         &.scroll {
