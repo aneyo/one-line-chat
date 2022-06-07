@@ -6,6 +6,8 @@
 https://aneyo.github.io/one-line-chat
 ```
 
+[![latest build](https://github.com/aneyo/one-line-chat/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/aneyo/one-line-chat/actions/workflows/pages/pages-build-deployment)
+
 ## Options _(as query string parameters)_
 
 - `channel=<string>` - Twitch channel to join. _defaults to **currently the most viewed stream** and fallbacks to `xqcow` for ~~testing purposes~~._
