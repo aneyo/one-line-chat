@@ -41,6 +41,8 @@ https://aneyo.github.io/one-line-chat
 
 - `pos=<bottom|top>` - chat line position. _defaults to `bottom`._
 
+- `shadow` - Add lovely "shadow" to chat lines.
+
 - `design` - Show message line maximum width with color. used for debug. _turned off by default._
 
 ## Examples

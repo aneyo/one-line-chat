@@ -11,7 +11,6 @@ export enum BackgroundTypeEnum {
   None = "none",
   Gradient = "gradient",
   Solid = "solid",
-  Shadow = "shadow",
 }
 
 export enum EmotesQualityEnum {
@@ -120,6 +119,7 @@ export const CHAT_POS = getParameter<ChatPositionEnum>(
   "pos",
   ChatPositionEnum.Bottom
 );
+export const USE_SHADOWS = query.has("shadow");
 export const LOAD_EMOTES = EMOTES_MODE !== EmotesModesEnum.None;
 export const LOAD_BADGES = BADGES_MODE !== BadgesModeEnum.None;
 export const PRELOAD_BADGES = BADGES_MODE === BadgesModeEnum.Preload;

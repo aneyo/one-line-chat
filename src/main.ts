@@ -12,13 +12,9 @@ import { checkForUserColor, getUserColor, setUserColor } from "./assets/users";
 import { connectToGOSUMEM, onGameStatusChanged } from "./misc/gosu";
 import {
   CHAT_CHANNEL,
-  CHAT_MARGIN,
-  CHAT_MAX_WIDTH,
   NAME_DISPAY_MODE,
   MESSAGE_SCROLL_SPEED,
   MESSAGE_TIMEOUT,
-  USE_DESIGN_MODE,
-  BACKGROUND_TYPE,
   USE_GOSU,
   LOAD_EMOTES,
   LOAD_BADGES,
@@ -26,12 +22,12 @@ import {
   NameDisplayModeEnum,
   USE_USER_COLOR_IN_MESSAGES,
   USE_USER_COLOR_IN_AUTHORS,
-  CHAT_AT_TOP,
 } from "./params";
 
 import "./styles/main.scss";
 import "./styles/debug.scss";
 import "./styles/background.scss";
+import { setStyles } from "./assets/style";
 
 const block = document.getElementById("chat")!;
 const chat = new ChatClient({});
@@ -245,21 +241,7 @@ function parseContent(data: TwitchPrivateMessage) {
   return message.join("&nbsp;");
 }
 
-(function setStyles() {
-  document.body.classList.toggle("design", USE_DESIGN_MODE);
-  document.body.classList.add("background", BACKGROUND_TYPE);
-  document.body.classList.toggle("top", CHAT_AT_TOP);
-
-  document.body.setAttribute(
-    "style",
-    [
-      `--margin: ${CHAT_MARGIN}px`,
-      CHAT_MAX_WIDTH ? `--bound: ${CHAT_MAX_WIDTH}px` : null,
-    ]
-      .filter((s) => !!s)
-      .join(";")
-  );
-})();
+setStyles();
 
 // * hide background at start
 document.body.classList.toggle("hide", true);

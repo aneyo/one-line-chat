@@ -27,6 +27,11 @@ body {
     max-width: var(--bound, calc(100% - var(--margin, 8px) * 2));
     width: 100%;
 
+    body.shadow & {
+      text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 1px black,
+        0 1px rgba(0, 0, 0, 0.69);
+    }
+
     & > .user {
       display: flex;
       height: 1.25em;
