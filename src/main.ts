@@ -22,17 +22,19 @@ import {
   USE_GOSU,
   LOAD_EMOTES,
   LOAD_BADGES,
+  getPopularDefaultChannel,
+  NameDisplayModeEnum,
+  USE_USER_COLOR,
+  USE_USER_COLOR_IN_MESSAGES,
+  USE_USER_COLOR_IN_AUTHORS,
 } from "./params";
 
 import "./styles/main.scss";
 import "./styles/debug.scss";
 import "./styles/background.scss";
 
-document.title = "#" + CHAT_CHANNEL;
-console.log("will join", "#" + CHAT_CHANNEL, "shortly");
-
 const block = document.getElementById("chat")!;
-const chat = new ChatClient({ channels: [CHAT_CHANNEL] });
+const chat = new ChatClient({});
 
 chat.onConnect(() => console.log("connected to chat."));
 chat.onJoin((e) => console.log("joined", e));
@@ -116,9 +118,11 @@ function showMessage(message: TwitchPrivateMessage) {
       ? `<span class="badges">${badgesStringJoined.join("")}</span>`
       : "";
 
-  const userNameString = `<span class="name" style="color: ${
-    message.userInfo.color
-  }">${resolveUsername(message.userInfo)}</span>`;
+  const userNameString = USE_USER_COLOR_IN_AUTHORS
+    ? `<span class="name" style="color: ${
+        message.userInfo.color
+      }">${resolveUsername(message.userInfo)}</span>`
+    : `<span class="name">${resolveUsername(message.userInfo)}</span>`;
 
   const messageContent = parseContent(message);
 
@@ -192,15 +196,15 @@ function hideMessage(message: TwitchPrivateMessage) {
 
 function resolveUsername(user: ChatUser) {
   switch (NAME_DISPAY_MODE) {
-    case "login":
+    case NameDisplayModeEnum.JustUsername:
       return user.userName;
-    case "combo":
+
+    case NameDisplayModeEnum.BothNames:
       if (user.displayName.toLocaleLowerCase() === user.userName)
         return user.displayName;
       else return `@${user.displayName} (${user.displayName})`;
 
-    case "local":
-    case "default":
+    case NameDisplayModeEnum.LocalizedName:
     default:
       return user.displayName || user.userName;
   }
@@ -230,7 +234,7 @@ function parseContent(data: TwitchPrivateMessage) {
         /* match eligible twitch nicknames with(or without) at sign */
         .replace(/@?\w{4,25}/gi, (sub) => {
           const nick = sub[0] === "@" ? sub.slice(1) : sub;
-          if (checkForUserColor(nick))
+          if (USE_USER_COLOR_IN_MESSAGES && checkForUserColor(nick))
             return `<b style="color: ${getUserColor(nick)}">${sub}</b>`;
           else if (sub[0] === "@") return `<b>${sub}</b>`;
           else return sub;
@@ -267,8 +271,20 @@ onGameStatusChanged((inGame) => {
   else document.body.classList.toggle("hide", true);
 });
 
-const channelID = await fetchBadges(CHAT_CHANNEL);
-await fetchEmotes(channelID);
+chat.onConnect(async function () {
+  const channel = (
+    CHAT_CHANNEL ?? (await getPopularDefaultChannel())
+  ).toLocaleLowerCase();
+
+  document.title = "#" + channel;
+  console.log(`fetching data for %c${channel}`, "font-weight:bold");
+
+  const channelID = await fetchBadges(channel);
+  await fetchEmotes(channelID);
+
+  chat.join(channel);
+});
+
 console.log("connecting to chat...");
 await chat.connect();
 if (USE_GOSU) connectToGOSUMEM();

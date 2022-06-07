@@ -1,10 +1,10 @@
-import { BACKGROUND_TYPE, GOSU_ADDR } from "../params";
+import { BackgroundTypeEnum, BACKGROUND_TYPE, GOSU_ADDR } from "../params";
 
 let ws: WebSocket | undefined = undefined;
 
 export function connectToGOSUMEM() {
   if (!!ws) return console.warn("already connected to gosu!");
-  if (BACKGROUND_TYPE === "none")
+  if (BACKGROUND_TYPE === BackgroundTypeEnum.None)
     return console.warn(
       "background type is 'none', so no need to connect to gosu!"
     );

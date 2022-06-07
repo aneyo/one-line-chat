@@ -1,4 +1,9 @@
-import { EmoteQuality, EMOTES_MODE, LOAD_EMOTES } from "../params";
+import {
+  EmoteQuality,
+  EmotesQualityEnum,
+  EMOTES_MODE,
+  LOAD_EMOTES,
+} from "../params";
 import { preloadImages } from "./preload";
 
 let emotesMap = new Map<string, string>();
@@ -13,12 +18,12 @@ interface FFZEmote {
   images: { "1x": string; "2x": string | null; "4x": string | null };
 }
 
-const TWITCH_EMOTE_SIZE = {
+const TWITCH_EMOTE_SIZE: { [key in EmoteQuality]: string } = {
   sd: "1.0",
   hd: "3.0",
 };
 
-const BTTV_EMOTE_SIZE = {
+const BTTV_EMOTE_SIZE: { [key in EmoteQuality]: string } = {
   sd: "1x",
   hd: "3x",
 };
@@ -28,7 +33,7 @@ export async function fetchEmotes(channel: string) {
     console.warn("using no-emotes mode.");
     return null;
   }
-  if (EMOTES_MODE === "hd") console.log("fetching HD emotes.");
+  if (EMOTES_MODE === EmotesQualityEnum.HD) console.log("fetching HD emotes.");
 
   const bttvGlobalEmotesData = (await (
     await fetch(`https://api.betterttv.net/3/cached/emotes/global`)
@@ -43,7 +48,7 @@ export async function fetchEmotes(channel: string) {
   ].map((emote) => [
     emote.code,
     `https://cdn.betterttv.net/emote/${emote.id}/${
-      BTTV_EMOTE_SIZE[EMOTES_MODE as EmoteQuality]
+      BTTV_EMOTE_SIZE[EMOTES_MODE as EmotesQualityEnum]
     }`,
   ]);
 
@@ -60,7 +65,7 @@ export async function fetchEmotes(channel: string) {
   const ffzEmotes = [...ffzGlobalEmotesData, ...ffzUserEmotesData].map(
     (emote) => [
       emote.code,
-      EMOTES_MODE === "hd"
+      EMOTES_MODE === EmotesQualityEnum.HD
         ? emote.images["4x"] || emote.images["2x"] || emote.images["1x"]
         : emote.images["1x"],
     ]
@@ -111,7 +116,7 @@ export function useTwitchEmote(
   theme: "dark" | "light" = "dark"
 ) {
   return `https://static-cdn.jtvnw.net/emoticons/v2/${code}/${format}/${theme}/${
-    TWITCH_EMOTE_SIZE[EMOTES_MODE as EmoteQuality]
+    TWITCH_EMOTE_SIZE[EMOTES_MODE as EmotesQualityEnum]
   }`;
 }
 
