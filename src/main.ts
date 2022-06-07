@@ -24,7 +24,6 @@ import {
   LOAD_BADGES,
   getPopularDefaultChannel,
   NameDisplayModeEnum,
-  USE_USER_COLOR,
   USE_USER_COLOR_IN_MESSAGES,
   USE_USER_COLOR_IN_AUTHORS,
   CHAT_AT_TOP,

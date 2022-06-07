@@ -1,9 +1,4 @@
-import {
-  EmoteQuality,
-  EmotesQualityEnum,
-  EMOTES_MODE,
-  LOAD_EMOTES,
-} from "../params";
+import { EmotesQualityEnum, EMOTES_MODE, LOAD_EMOTES } from "../params";
 import { preloadImages } from "./preload";
 
 let emotesMap = new Map<string, string>();
@@ -18,12 +13,12 @@ interface FFZEmote {
   images: { "1x": string; "2x": string | null; "4x": string | null };
 }
 
-const TWITCH_EMOTE_SIZE: { [key in EmoteQuality]: string } = {
+const TWITCH_EMOTE_SIZE: { [key in EmotesQualityEnum]: string } = {
   sd: "1.0",
   hd: "3.0",
 };
 
-const BTTV_EMOTE_SIZE: { [key in EmoteQuality]: string } = {
+const BTTV_EMOTE_SIZE: { [key in EmotesQualityEnum]: string } = {
   sd: "1x",
   hd: "3x",
 };
