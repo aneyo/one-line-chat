@@ -95,6 +95,22 @@ body.background.solid::before {
   background-color: hsla(0, 0%, 0%, 0.5);
 }
 
+/* pos=top */
+/* will be used in conjunction with body.background.gradient::before */
+body.background.top.gradient::before {
+  background-image: linear-gradient(
+    #000 -5%,
+    hsla(0, 0%, 0%, 0.9) 5%,
+    hsla(0, 0%, 0%, 0) 50%
+  );
+}
+
+/* pos=top */
+/* will be used in conjunction with body.background.solid::before */
+body.background.top.solid::before {
+  top: 0;
+}
+
 /* when background is hidden */
 body.background.hide::before {
   opacity: 0;
