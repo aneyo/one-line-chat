@@ -2,7 +2,9 @@
 
 ![](./poggers.png)
 
-`https://aneyo.github.io/one-line-chat`
+```
+https://aneyo.github.io/one-line-chat
+```
 
 ## Options _(as query string parameters)_
 
