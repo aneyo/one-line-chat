@@ -27,6 +27,7 @@ import {
   USE_USER_COLOR,
   USE_USER_COLOR_IN_MESSAGES,
   USE_USER_COLOR_IN_AUTHORS,
+  CHAT_AT_TOP,
 } from "./params";
 
 import "./styles/main.scss";
@@ -248,12 +249,13 @@ function parseContent(data: TwitchPrivateMessage) {
 (function setStyles() {
   document.body.classList.toggle("design", USE_DESIGN_MODE);
   document.body.classList.add("background", BACKGROUND_TYPE);
+  document.body.classList.toggle("top", CHAT_AT_TOP);
 
   document.body.setAttribute(
     "style",
     [
-      `--margin: ${CHAT_MARGIN()}px`,
-      CHAT_MAX_WIDTH() ? `--bound: ${CHAT_MAX_WIDTH()}px` : null,
+      `--margin: ${CHAT_MARGIN}px`,
+      CHAT_MAX_WIDTH ? `--bound: ${CHAT_MAX_WIDTH}px` : null,
     ]
       .filter((s) => !!s)
       .join(";")

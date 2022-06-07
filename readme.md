@@ -30,12 +30,14 @@
 
 - `bound=<number>` - Maximum width of the message line in pixels. if message is wider than bound, use scrolling. _defaults to the width of viewport minus `margin*2`._
 
-- `usercolor=<none|author|mention|both>` - Defines the use of user color in messages. _defaults to `both`_
+- `usercolor=<none|author|mention|both>` - Defines the use of user color in messages. _defaults to `both`._
 
   - `none` - do not use user colors at all.
   - `author` - use user colors only on message author.
   - `mention` - use user colors only on mentions in message contents.
   - `both` - use user color on both author and mentions.
+
+- `pos=<bottom|top>` - chat line position. _defaults to `bottom`._
 
 - `design` - Show message line maximum width with color. used for debug. _turned off by default._
 

@@ -18,7 +18,12 @@ body {
 
     position: absolute;
     left: var(--margin, 8px);
+
     bottom: var(--margin, 8px);
+    body.top & {
+      top: var(--margin, 8px);
+    }
+
     max-width: var(--bound, calc(100% - var(--margin, 8px) * 2));
     width: 100%;
 
@@ -86,7 +91,11 @@ body {
 
     &.show {
       z-index: 1;
-      animation: show-slide 250ms ease-out both;
+      animation: show-slide-bottom 250ms ease-out both;
+
+      body.top & {
+        animation: show-slide-top 250ms ease-out both;
+      }
     }
 
     &.hide {
@@ -96,9 +105,20 @@ body {
   }
 }
 
-@keyframes show-slide {
+@keyframes show-slide-bottom {
   0% {
     transform: translateY(1.2em);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes show-slide-top {
+  0% {
+    transform: translateY(-1.2em);
     opacity: 0.75;
   }
   100% {
